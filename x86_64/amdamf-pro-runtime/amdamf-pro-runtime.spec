@@ -17,7 +17,7 @@ URL:      http://repo.radeon.com/amdgpu
 
 
 %undefine _disable_source_fetch
-Source0:  https://repo.radeon.com/amf/%{major}/ubuntu/pool/main/questing/amf-amdgpu-pro_%{major}.%{minor}-%{patch}-_amd64.deb
+Source0:  https://repo.radeon.com/amf/%{major}/ubuntu/pool/main/questing/amf-amdgpu-pro_%{major}.%{minor}-%{patch}_amd64.deb
 Source1:  https://repo.radeon.com/amf/%{major}/ubuntu/pool/main/questing/libamdenc-amdgpu-pro_%{major}.%{minor}-%{patch}_amd64.deb
 
 Provides:      amf-runtime = %{major}-%{release}
