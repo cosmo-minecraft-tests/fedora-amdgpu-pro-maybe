@@ -1,27 +1,13 @@
 %define _build_id_links none
 
 # global info
-%global repo 5.7.2
-%global major 23.30
-%global minor 1684442
-# pkg info
-%global amf 1.4.32
-%global enc 1.0
-%global amdvlk 2023.Q4.1
-# drm info
-%global drm 2.4.115.50702-1683306
-%global amdgpu 1.0.0.50702-1683306
-# firmware info
-%global firmware_rev 6.2.4
-%global firmware_maj 50702
-%global firmware_min 1683306
-%global _firmwarepath	/usr/lib/firmware
+%global major 25.30
+%global minor 422-1
 # Distro info
-%global fedora 39
-%global ubuntu 22.04
+%global fedora 43
 
 Name:     amdamf-pro-runtime
-Version:  %{repo}
+Version:  %{major}
 Release:  1%{?dist}
 License:       AMDGPU PRO  EULA NON-REDISTRIBUTABLE
 Group:         System Environment/Libraries
@@ -30,16 +16,16 @@ URL:      http://repo.radeon.com/amdgpu
 
 
 %undefine _disable_source_fetch
-Source0:  http://repo.radeon.com/amdgpu/%{repo}/ubuntu/pool/proprietary/a/amf-amdgpu-pro/amf-amdgpu-pro_%{amf}-%{minor}.%{ubuntu}_amd64.deb
-Source1:  http://repo.radeon.com/amdgpu/%{repo}/ubuntu/pool/proprietary/liba/libamdenc-amdgpu-pro/libamdenc-amdgpu-pro_%{enc}-%{minor}.%{ubuntu}_amd64.deb
+Source0:  http://repo.radeon.com/amf/%{major}/ubuntu/pool/proprietary/a/amf-amdgpu-pro/amf-amdgpu-pro_%{major}-%{minor}._amd64.deb
+Source1:  http://repo.radeon.com/amf/%{major}/ubuntu/pool/proprietary/liba/libamdenc-amdgpu-pro/libamdenc-amdgpu-pro_%{major}-%{minor}_amd64.deb
 
 Provides:      amf-runtime = %{major}-%{release}
 Provides:      amf-runtime(x86_64) = %{major}-%{release}
-Provides:      amf-amdgpu-pro = %{amf}-%{minor}.%{ubuntu}
-Provides:      amf-amdgpu-pro(x86_64) = %{amf}-%{minor}.%{ubuntu}
+Provides:      amf-amdgpu-pro = %{major}-%{minor}
+Provides:      amf-amdgpu-pro(x86_64) = %{major}-%{minor}
 Provides:      libamfrt64.so.1()(64bit) 
-Provides:      libamdenc-amdgpu-pro = %{enc}-%{minor}.%{ubuntu}
-Provides:      libamdenc-amdgpu-pro(x86_64) = %{enc}-%{minor}.%{ubuntu}
+Provides:      libamdenc-amdgpu-pro = %{major}-%{minor}
+Provides:      libamdenc-amdgpu-pro(x86_64) = %{major}-%{minor}
 Provides:      libamdenc64.so.1.0()(64bit)  
 Provides:      libamdenc64.so.1.0()(64bit)  
 
@@ -51,10 +37,7 @@ BuildRequires: cpio
 Requires(post): /sbin/ldconfig  
 Requires(postun): /sbin/ldconfig 
 
-Requires:      vulkan-amdgpu-pro  
-Requires:      libdrm-pro
 Requires:      opencl-filesystem
-Requires:      amd-gpu-pro-firmware
 
 Recommends:	 rocm-opencl-runtime  
 
@@ -71,30 +54,18 @@ ar x --output . %{SOURCE1}
 tar -xJC files -f data.tar.xz || tar -xC files -f data.tar.gz
 
 %install
-mkdir -p %{buildroot}/opt/amdgpu-pro/amf/%{_lib}
-mkdir -p %{buildroot}/opt/amdgpu-pro/amf/share/licenses/amf-amdgpu-pro
-mkdir -p %{buildroot}/opt/amdgpu-pro/amf/share/licenses/libamdenc-amdgpu-pro
+mkdir -p %{buildroot}/usr/%{_lib}
+mkdir -p %{buildroot}/usr/share/licenses/amf-amdgpu-pro
+mkdir -p %{buildroot}/usr/share/licenses/libamdenc-amdgpu-pro
 #
-cp -r files/opt/amdgpu-pro/lib/x86_64-linux-gnu/* %{buildroot}/opt/amdgpu-pro/amf/%{_lib}/
-cp -r files/usr/share/doc/amf-amdgpu-pro/copyright %{buildroot}/opt/amdgpu-pro/amf/share/licenses/amf-amdgpu-pro/LICENSE
-cp -r files/usr/share/doc/libamdenc-amdgpu-pro/copyright %{buildroot}/opt/amdgpu-pro/amf/share/licenses/libamdenc-amdgpu-pro/LICENSE
-#
-mkdir -p %{buildroot}/opt/amdgpu-pro/share/licenses
-ln -s /opt/amdgpu-pro/amf/share/licenses/amf-amdgpu-pro %{buildroot}/opt/amdgpu-pro/share/licenses/amf-amdgpu-pro
-ln -s /opt/amdgpu-pro/amf/share/licenses/libamdenc-amdgpu-pro %{buildroot}/opt/amdgpu-pro/share/licenses/libamdenc-amdgpu-pro
-#
-echo "adding library path"
-mkdir -p %{buildroot}/etc/ld.so.conf.d
-touch %{buildroot}/etc/ld.so.conf.d/amf-runtime-%{_arch}.conf
-echo "/opt/amdgpu-pro/amf/%{_lib}" > %{buildroot}/etc/ld.so.conf.d/amf-runtime-%{_arch}.conf
+cp -r files/opt/amf/lib/x86_64-linux-gnu/* %{buildroot}/usr/%{_lib}/
+cp -r files/usr/share/doc/amf-amdgpu-pro/copyright %{buildroot}/usr/share/licenses/amf-amdgpu-pro/LICENSE
+cp -r files/usr/share/doc/libamdenc-amdgpu-pro/copyright %{buildroot}/usr/share/licenses/libamdenc-amdgpu-pro/LICENSE
 
 %files
-/etc/ld.so.conf.d/amf-runtime-%{_arch}.conf
-/opt/amdgpu-pro/amf/lib64/libamf*
-/opt/amdgpu-pro/amf/lib64/libamdenc*
-/opt/amdgpu-pro/amf/share/licenses/amf-amdgpu-pro/LICENSE
-/opt/amdgpu-pro/amf/share/licenses/libamdenc-amdgpu-pro/LICENSE
-/opt/amdgpu-pro/share/*
+/usr/lib64/libamf*
+/usr/lib64/libamdenc*
+/usr/share/*
 
 %post
 /sbin/ldconfig
